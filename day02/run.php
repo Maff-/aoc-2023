@@ -48,3 +48,16 @@ foreach ($inputData as $game => $reveals) {
 }
 
 echo 'Part 1: ', $sum, \PHP_EOL;
+
+// Part 2
+$colors = ['red', 'green', 'blue'];
+$sumPower = 0;
+foreach ($inputData as $game => $reveals) {
+    $power = 1;
+    foreach ($colors as $color) {
+        $power *= max(...array_map(static fn ($reveal) => $reveal[$color] ?? 0, $reveals));
+    }
+    $sumPower += $power;
+}
+
+echo 'Part 2: ', $sumPower, \PHP_EOL;
