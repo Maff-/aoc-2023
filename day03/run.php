@@ -68,3 +68,63 @@ foreach ($numbers as [$value, $pos, $length]) {
 }
 
 echo 'Part 1: ', $sum, \PHP_EOL;
+
+// Part 2
+
+$numberMap = [];
+$stars = [];
+
+function addNumberToMap(array $number, array &$map) {
+    [$value, $pos, $length] = $number;
+    for ($x = $pos[0]; $x < $pos[0] + $length; $x++) {
+        $map[$pos[1]][$x] = $number;
+    }
+}
+
+for ($y = 0; $y < $height; $y++) {
+    $number = null;
+    $prev = null;
+    for ($x = 0; $x < $width; $x++) {
+        $char = $input[$y][$x];
+        if (ctype_digit($char)) {
+            $number ??= ['', [$x, $y], 0];
+            $number[0] .= $char;
+            $number[2]++;
+        } else {
+            if ($number) {
+                $number[0] = (int)$number[0];
+                addNumberToMap($number, $numberMap);
+                $number = null;
+            }
+            if ($char === '*') {
+                $stars[] = [$x, $y];
+            }
+        }
+    }
+    if ($number) {
+        $number[0] = (int)$number[0];
+        addNumberToMap($number, $numberMap);
+    }
+}
+
+$gearSum = 0;
+$around = [
+    [-1, -1], [ 0, -1], [+1, -1],
+    [-1,  0],           [+1,  0],
+    [-1, +1], [ 0, +1], [+1, +1],
+];
+foreach ($stars as $n => [$xStar, $yStar]) {
+    $gearNumbers = [];
+    foreach ($around as [$xD, $yD]) {
+        $number = $numberMap[$yStar + $yD][$xStar + $xD] ?? null;
+        if ($number && !in_array($number, $gearNumbers, true)) {
+            $gearNumbers[] = $number;
+        }
+    }
+    if (count($gearNumbers) === 2) {
+        $ratio = $gearNumbers[0][0] * $gearNumbers[1][0];
+        $gearSum += $ratio;
+    }
+}
+
+echo 'Part 2: ', $gearSum, \PHP_EOL;
