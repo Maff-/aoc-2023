@@ -34,3 +34,16 @@ foreach ($input as [$game, $winning, $card]) {
 }
 
 echo 'Part 1: ', $sum, \PHP_EOL;
+
+// Part 2
+
+$cardWinningCount = array_map(static fn($arg) => count(array_intersect($arg[1], $arg[2])), $input);
+$cardCount = count($input);
+
+for ($i = $cardCount - 1; $i >= 0; $i--) {
+    for ($j = min($i + $cardWinningCount[$i], $cardCount - 1); $j > $i; $j--) {
+        $cardWinningCount[$i] += $cardWinningCount[$j];
+    }
+}
+
+echo 'Part 2: ', (array_sum($cardWinningCount) + $cardCount), \PHP_EOL;
