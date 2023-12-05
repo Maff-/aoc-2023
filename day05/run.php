@@ -53,6 +53,8 @@ $input = array_map(static function ($data) {
 }, $input);
 $input = array_column($input, 1, 0);
 
+// Part 1
+
 $locations = [];
 foreach ($seeds as $n => $seed) {
     $value = $seed;
@@ -69,3 +71,64 @@ foreach ($seeds as $n => $seed) {
 }
 
 echo 'Part 1: ', min($locations), \PHP_EOL;
+
+// Part 2
+
+$location = null;
+$seedRanges = array_chunk($seeds, 2);
+$seedRanges = array_map(static fn($a) => [$a[0], $a[0] + $a[1] - 1], $seedRanges);
+
+foreach ($seedRanges as [$start, $end]) {
+    $next = [[$start, $end]];
+    foreach ($input as $map) {
+        $queue = $next;
+        $next = [];
+        while ($queue) {
+            [$start, $end] = array_shift($queue);
+            $found = false;
+            foreach ($map as [$destStart, $srcStart, $length]) {
+                $srcEnd = $srcStart + $length - 1;
+                $offset = $destStart - $srcStart;
+
+                if ($end < $srcStart || $start > $srcEnd) {
+                    // completely before/after
+                    continue;
+                }
+                if ($start >= $srcStart && $end <= $srcEnd) {
+                    // completely included
+                    $next[] = [$start + $offset, $end + $offset];
+                    $found = true;
+                    break;
+                }
+                if ($start < $srcStart && $end >= $srcStart) {
+                    // split range before start
+                    $queue[] = [$start, $srcStart - 1];
+                    $start = $srcStart;
+                }
+                if ($end > $srcEnd && $start <= $srcEnd) {
+                    // split range after end
+                    $queue[] = [$srcEnd + 1, $end];
+                    $end = $srcEnd;
+                }
+                $start += $offset;
+                $end += $offset;
+                $next[] = [$start, $end];
+                $found = true;
+                break;
+            }
+            if (!$found) {
+                $next[] = [$start, $end];
+            }
+            continue; // no-op for breakpoint :)
+        }
+        continue; // no-op for breakpoint :)
+    }
+
+    foreach ($next as [$locationStart, $_]) {
+        if ($location === null || $location > $locationStart) {
+            $location = $locationStart;
+        }
+    }
+}
+
+echo 'Part 2: ', $location, \PHP_EOL;
