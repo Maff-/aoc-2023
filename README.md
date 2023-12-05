@@ -1,4 +1,4 @@
-Advent of Code - 2022
+Advent of Code - 2023
 =====================
 
 My 5th? iteration of '[Advent of Code][AoC]'. The year is [2023].
@@ -21,6 +21,6 @@ You and your eyes are warned!
 <!---->
 
 [AoC]: https://adventofcode.com
-[2022]: https://adventofcode.com/2023
+[2023]: https://adventofcode.com/2023
 [phpsadness]: http://phpsadness.com/
 [PHP]: https://www.php.net/
