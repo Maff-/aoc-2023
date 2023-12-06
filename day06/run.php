@@ -18,7 +18,6 @@ $input = array_map(static function ($line) {
 $result = 1;
 foreach ($input[0] as $n => $time) {
     $record = $input[1][$n];
-    $prev = null;
     $beats = 0;
     for ($hold = 1; $hold < $time; $hold++) {
         $timeRemaining = $time - $hold;
@@ -33,3 +32,21 @@ foreach ($input[0] as $n => $time) {
 }
 
 echo 'Part 1: ', $result, \PHP_EOL;
+
+// Part 2 (slow, but fast-enough approach)
+
+$time = implode('', $input[0]);
+$record = implode('', $input[1]);
+
+$beats = 0;
+for ($hold = 1; $hold < $time; $hold++) {
+    $timeRemaining = $time - $hold;
+    $distance = $timeRemaining * $hold;
+    if ($distance > $record) {
+        $beats++;
+    } elseif ($beats) {
+        break;
+    }
+}
+
+echo 'Part 2: ', $beats, \PHP_EOL;
