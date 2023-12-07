@@ -66,3 +66,54 @@ foreach ($hands as $n => [$hand, $bid]) {
 }
 
 echo 'Part 1: ', $total, \PHP_EOL;
+
+// Part 2
+
+$strength = array_flip(array_reverse(str_split('AKQT98765432J')));
+
+function getHandType2(array $hand): int
+{
+    $count = array_count_values($hand);
+    arsort($count);
+    $jokerCount = $count['J'] ?? 0;
+    $countValues = array_values(array_diff_key($count, ['J' => true]));
+    $countValues[0] ??= 0;
+
+    return match (true) {
+        $countValues[0] + $jokerCount === 5 => 6, // Five of a kind
+        $countValues[0] + $jokerCount === 4 => 5, // Four of a kind
+        $countValues[0] + $jokerCount === 3 && $countValues[1] === 2 => 4, // Full house
+        $countValues[0] + $jokerCount === 3 => 3, // Three of a kind
+        $countValues[0] + $jokerCount === 2 && $countValues[1] === 2 => 2, // Two pair
+        $countValues[0] + $jokerCount === 2 => 1, // One pair
+        default => 0, // High card
+    };
+}
+
+assert(getHandType2(str_split('JJJJJ')) === 6);
+assert(getHandType2(str_split('J4441')) === 5);
+assert(getHandType2(str_split('J2233')) === 4);
+assert(getHandType2(str_split('J3321')) === 3);
+assert(getHandType2(str_split('JJ123')) === 3);
+
+function compareHands2(array $a, array $b): int
+{
+    global $strength;
+    $comparison = getHandType2($a) <=> getHandType2($b);
+    $pos = 0;
+    while ($comparison === 0 && $pos < 5) {
+        $comparison = $strength[$a[$pos]] <=> $strength[$b[$pos]];
+        $pos++;
+    }
+    return $comparison;
+}
+
+$hands = $input;
+usort($hands, static fn ($a, $b) => compareHands2($a[0], $b[0]));
+
+$total = 0;
+foreach ($hands as $n => [$hand, $bid]) {
+    $total += ($n+1) * $bid;
+}
+
+echo 'Part 2: ', $total, \PHP_EOL;
