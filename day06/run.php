@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 $input = file_exists('input.txt') ? file_get_contents('input.txt') : null;
 
-$input ??= <<<EXMAPLE
+$input ??= <<<EXAMPLE
 Time:      7  15   30
 Distance:  9  40  200
-EXMAPLE;
+EXAMPLE;
 
 $input = array_map(static function ($line) {
     return array_map('intval', preg_split('/\s+/', trim(explode(':', $line)[1])));

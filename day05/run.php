@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 $input = file_exists('input.txt') ? file_get_contents('input.txt') : null;
 
-$input ??= <<<EXMAPLE
+$input ??= <<<EXAMPLE
 seeds: 79 14 55 13
 
 seed-to-soil map:
@@ -38,7 +38,7 @@ temperature-to-humidity map:
 humidity-to-location map:
 60 56 37
 56 93 4
-EXMAPLE;
+EXAMPLE;
 
 $input = explode("\n\n", trim($input));
 

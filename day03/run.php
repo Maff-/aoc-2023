@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 $input = file_exists('input.txt') ? file_get_contents('input.txt') : null;
 
-$input ??= <<<EXMAPLE
+$input ??= <<<EXAMPLE
 467..114..
 ...*......
 ..35..633.
@@ -15,7 +15,7 @@ $input ??= <<<EXMAPLE
 ......755.
 ...$.*....
 .664.598..
-EXMAPLE;
+EXAMPLE;
 
 $input = array_map('str_split', explode("\n", trim($input)));
 
