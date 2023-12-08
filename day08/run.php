@@ -34,3 +34,41 @@ while ($current !== $target) {
 }
 
 echo 'Part 1: ', $step, \PHP_EOL;
+
+// Part 2
+
+function gcd(int $a, int $b): int
+{
+    return $b === 0 ? $a : gcd($b, $a % $b);
+}
+
+function lcm(...$values): int
+{
+    $result = array_shift($values);
+    foreach ($values as $val) {
+        $result = $val / gcd($val, $result) * $result;
+    }
+
+    return $result;
+}
+
+$nodes = array_filter(array_keys($map), static fn($node) => str_ends_with($node, 'A'));
+$directionsCount = count($directions);
+$steps = [];
+foreach ($nodes as $n => $current) {
+    $step = 0;
+    while (true) {
+        $direction = $directions[$step % $directionsCount];
+        $next = $map[$current][$direction];
+        $step++;
+        if ($next[2] === 'Z') {
+            break;
+        }
+        $current = $next;
+    }
+    $steps[$n] = $step;
+}
+
+$result = lcm(...$steps);
+
+echo 'Part 2: ', $result, \PHP_EOL;
