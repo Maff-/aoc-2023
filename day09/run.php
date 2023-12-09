@@ -41,3 +41,33 @@ foreach ($input as $sequence) {
 }
 
 echo 'Part 1: ', $sum, \PHP_EOL;
+
+// Part 2
+
+function getPrev(array $sequence): int
+{
+    $same = true;
+    $prev = null;
+    $foo = $sequence;
+    $bar = [];
+    for ($i = 0, $iMax = count($foo) - 2; $i <= $iMax; $i++) {
+        $diff = $foo[$i + 1] - $foo[$i];
+        if ($prev !== null && $diff !== $prev) {
+            $same = false;
+        }
+        $prev = $diff;
+        $bar[] = $diff;
+    }
+    if ($same) {
+        return $sequence[0] - $diff;
+    }
+
+    return $sequence[0] - getPrev($bar);
+}
+
+$sum = 0;
+foreach ($input as $sequence) {
+    $sum += getPrev($sequence);
+}
+
+echo 'Part 2: ', $sum, \PHP_EOL;
