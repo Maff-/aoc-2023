@@ -33,12 +33,15 @@ $patterns = $input;
 
 // Part 1
 
-function summarize(array $pattern): int
+function summarize(array $pattern, ?int $ignore = null): int
 {
     $width = strlen($pattern[0]);
     $height = count($pattern);
 
     for ($x = 1; $x < $width; $x++) {
+        if ($x === $ignore) {
+            continue;
+        }
         $foo = min($x, $width - $x);
         $i = 0;
         $r = $x + $i;
@@ -54,6 +57,9 @@ function summarize(array $pattern): int
     }
 
     for ($y = 1; $y < $height; $y++) {
+        if ($y * 100 === $ignore) {
+            continue;
+        }
         $foo = min($y, $height - $y);
         $i = 0;
         $a = $y + $i;
@@ -68,12 +74,42 @@ function summarize(array $pattern): int
         return $y * 100;
     }
 
-    throw new \RuntimeException('No reflection???');
+    return -1;
 }
 
-$result = null;
+$sum = null;
 foreach ($patterns as $n => $pattern) {
-    $result += summarize($pattern);
+    $result = summarize($pattern);
+    if ($result === -1) {
+        throw new \RuntimeException('No reflection???');
+    }
+    $sum += $result;
 }
 
-echo 'Part 1: ', $result, \PHP_EOL;
+echo 'Part 1: ', $sum, \PHP_EOL;
+
+// Part 2
+
+$sum = null;
+foreach ($patterns as $n => $pattern) {
+    $width = strlen($pattern[0]);
+    $height = count($pattern);
+
+    $orgResult = summarize($pattern);
+    for ($x = 0; $x < $width; $x++) {
+        for ($y = 0; $y < $height; $y++) {
+            $alt = $pattern;
+            $alt[$y][$x] = $alt[$y][$x] === '#' ? '.' : '#';
+            $altResult = summarize($alt, $orgResult);
+            if ($altResult !== -1 && $altResult !== $orgResult) {
+                $sum += $altResult;
+                continue 3;
+            }
+        }
+    }
+
+    throw new \RuntimeException('No alternative reflection found!?');
+}
+
+echo 'Part 2: ', $sum, \PHP_EOL;
+
