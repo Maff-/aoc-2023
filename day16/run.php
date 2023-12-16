@@ -92,3 +92,19 @@ function energize(array $input, array $start): int
 $result = energize($input, [[0, 0], [1, 0]]);
 
 echo 'Part 1: ', $result, \PHP_EOL;
+
+// Part 2
+
+$max = 0;
+for ($y = 0; $y < $height; $y++) {
+    $left = energize($input, [[0, $y], [1, 0]]);
+    $right = energize($input, [[$width - 1, $y], [-1, 0]]);
+    $max = max($max, $left, $right);
+}
+for ($x = 1; $x < $width - 1; $x++) {
+    $down = energize($input, [[$x, 0], [0, 1]]);
+    $up = energize($input, [[$y, $height - 1], [0, -1]]);
+    $max = max($max, $down, $up);
+}
+
+echo 'Part 2: ', $max, \PHP_EOL;
