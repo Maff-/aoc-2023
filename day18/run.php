@@ -69,3 +69,40 @@ while ($queue) {
 $result = $count;
 
 echo 'Part 1: ', $result, \PHP_EOL;
+
+// Part 2
+
+// Transform 'colors' into instructions
+$instructions = array_map(static function (array $args): array {
+    [, , $color] = $args;
+    $direction = ['R', 'D', 'L', 'U'][(int)$color[-1]];
+    $distance = hexdec(substr($color, 0, -1));
+    return [$direction, $distance, $color];
+}, $input);
+
+$from = [0, 0];
+$points = [$from];
+$totalDistance = 0;
+foreach ($instructions as [$direction, $distance, $color]) {
+    $totalDistance += $distance;
+    [$x, $y] = $from;
+    [$dX, $dY] = $directions[$direction];
+    $to = [$x + ($dX * $distance), $y + ($dY * $distance)];
+    $points[] = $to;
+    $from = $to;
+}
+
+function shoelace(array $points): int|float
+{
+    $area = 0;
+    for ($i = 0, $num = count($points); $i < $num; $i++) {
+        $current = $points[$i];
+        $next = $points[($i + 1) % $num];
+        $area += $current[0] * $next[1] - $current[1] * $next[0];
+    }
+    return $area / 2;
+}
+
+$result = shoelace($points) + ($totalDistance / 2) + 1;
+
+echo 'Part 2: ', $result, \PHP_EOL;
