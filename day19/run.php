@@ -91,3 +91,61 @@ function sumAccepted(array $workflows, array $parts): int
 $result = sumAccepted($workflows, $parts);
 
 echo 'Part 1: ', $result, \PHP_EOL;
+
+// Part 2
+
+const RATING_MIN = 1;
+const RATING_MAX = 4000;
+
+function countRange(array $range): int
+{
+    $result = 1;
+    foreach ($range as [$min, $max]) {
+        $result *= $max - $min + 1;
+    }
+    return $result;
+}
+
+function countAcceptable(array $ranges, array $workflows, string $workflow = 'in', int &$count = 0): void
+{
+    $rules = $workflows[$workflow];
+    $next = [];
+    foreach ($rules as $rule) {
+        if ($rule[0] === 'E') {
+            $next[] = [$rule[1], $ranges];
+            break;
+        }
+        [, $attr, $operator, $value, $result] = $rule;
+        if ($operator === '<' && $value > $ranges[$attr][0] && $value <= $ranges[$attr][1]) {
+            $low = $ranges;
+            $low[$attr][1] = $value - 1;
+            $high = $ranges;
+            $high[$attr][0] = $value;
+            $next[] = [$result, $low];
+            $next[] = [$workflow, $high];
+            break;
+        }
+        if ($operator === '>' && $value >= $ranges[$attr][0] && $value < $ranges[$attr][1]) {
+            $low = $ranges;
+            $low[$attr][1] = $value;
+            $high = $ranges;
+            $high[$attr][0] = $value + 1;
+            $next[] = [$workflow, $low];
+            $next[] = [$result, $high];
+            break;
+        }
+    }
+
+    foreach ($next as [$target, $newRange]) {
+        if ($target === 'A') {
+            $count += countRange($newRange);
+        } elseif ($target !== 'R') {
+            countAcceptable($newRange, $workflows, $target, $count);
+        }
+    }
+}
+
+$result = 0;
+countAcceptable(array_fill_keys(str_split('xmas'), [RATING_MIN, RATING_MAX]), $workflows, count: $result);
+
+echo 'Part 2: ', $result, \PHP_EOL;
